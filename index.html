@@ -1,0 +1,92 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Divide la Propi</title>
+  <link rel="stylesheet" href="style.css" />
+  
+</head>
+<body>
+  <!-- <img src="michi negro money-12-800x534.jpg" alt=""> -->
+	<h1>Divide Equitativamente la Propina</h1>
+	<form>
+		<label for="money">Monto Total de Dinero Recaudado:</label>
+		<input type="number" id="money" name="money"><br>
+
+		<label for="workers">Trabajadores:</label><br>
+		<div id="workers-container">
+			<div>
+				<input type="text" name="worker-name[]" placeholder="Nombre">
+				<input type="number" name="worker-hours[]" placeholder="Horas Trabajadas">
+			</div>
+		</div>
+		<button type="button" id="add-worker">Agregar Trabajador</button><br><br>
+
+		<button type="button" id="calculate">Calcular</button>
+	</form>
+
+	<div id="results"></div>
+
+	<script>
+		const addWorkerButton = document.getElementById('add-worker');
+		const workersContainer = document.getElementById('workers-container');
+
+		addWorkerButton.addEventListener('click', () => {
+			const newWorker = document.createElement('div');
+			newWorker.innerHTML = `
+				<input type="text" name="worker-name[]" placeholder="Nombre">
+				<input type="number" name="worker-hours[]" placeholder="Horas Trabajadas">
+			`;
+			workersContainer.appendChild(newWorker);
+		});
+
+		document.getElementById('calculate').addEventListener('click', () => {
+			const money = Number(document.getElementById('money').value);
+			const workerNames = document.getElementsByName('worker-name[]');
+			const workerHours = document.getElementsByName('worker-hours[]');
+			let totalHours = 0;
+			const workerPercentages = [];
+			const resultsDiv = document.getElementById('results');
+			resultsDiv.innerHTML = '';
+
+			for (let i = 0; i < workerHours.length; i++) {
+				totalHours += Number(workerHours[i].value);
+			}
+
+			if (totalHours === 0) {
+				resultsDiv.innerHTML = '<p>No se han ingresado horas trabajadas.</p>';
+				return;
+			}
+
+			for (let i = 0; i < workerHours.length; i++) {
+				const percentage = Number(workerHours[i].value) / totalHours;
+				const amount = money * percentage;
+				workerPercentages.push({name: workerNames[i].value, percentage: percentage, amount: amount});
+			}
+
+			resultsDiv.innerHTML = `
+				<table>
+					<tr>
+						<th>Trabajador</th>
+						<th>Porcentaje</th>
+						<th>Monto</th>
+					</tr>
+					${workerPercentages.map(worker => `
+						<tr>
+							<td>${worker.name}</td>
+							<td>${(worker.percentage * 100).toFixed(2)}%</td>
+							<td>$${worker.amount.toFixed(2)}</td>
+						</tr>
+					`).join('')}
+				</table>
+			`;
+		});
+	</script>
+  <br>
+  <br>
+
+<footer>Radharani Delgado &copy;2022 </footer> 
+
+</body>
+</html>
